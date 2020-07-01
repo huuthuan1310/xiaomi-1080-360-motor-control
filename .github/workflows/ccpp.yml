@@ -1,0 +1,81 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches:
+      - '*'
+    tags:
+      - '*'
+env:
+  isReleaseCandidate: ${{ contains(github.ref, 'tags') && contains(github.ref, '-rc') }}
+  isFinalRelease: ${{ contains(github.ref, 'tags') && !contains(github.ref, '-rc') }}
+
+jobs:
+  build:
+
+    runs-on: ubuntu-18.04
+
+    steps:
+
+    - name: Checkout source code
+      uses: actions/checkout@v2
+
+    - name: Add ARM architecture to APT
+      run: sudo dpkg --add-architecture armhf
+
+    - name: Setup APT repositories for ARM
+      run: sudo mv sources.list /etc/apt/sources.list
+
+    - name: Update APT repositories
+      run: sudo apt-get update
+
+    - name: Install ARM cross compiler
+      run: sudo apt-get -y install gcc-arm-linux-gnueabihf
+
+#    - name: Install dependencies
+#      run: sudo apt-get install libgcc-s1:armhf gcc-10-base:armhf libgcc1:armhf libc6:armhf libc6-dev:armhf zlib1g:armhf zlib1g-dev:armhf
+
+    - name: Compile
+      run: cd src/motor && make target=CROSS
+
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v1
+      with:
+        name: motord
+        path: src/motor/motord
+
+    - name: Release (pre-release)
+      if: env.isReleaseCandidate == 'true'
+      uses: ncipollo/release-action@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        prerelease: true
+        artifacts: src/motor/motord
+        
+    - name: Update latest-rc tag
+      if: env.isReleaseCandidate == 'true'
+      uses: ncipollo/release-action@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        tag: latest-rc
+        allowUpdates: true
+        replacesArtifacts: true
+        prerelease: true
+        artifacts: src/motor/motord
+
+    - name: Release (final)
+      if: env.isFinalRelease == 'true'
+      uses: ncipollo/release-action@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        artifacts: src/motor/motord
+        
+    - name: Update latest tag
+      if: env.isFinalRelease == 'true'
+      uses: ncipollo/release-action@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        tag: latest
+        allowUpdates: true
+        replacesArtifacts: true
+        artifacts: src/motor/motord
