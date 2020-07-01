@@ -32,9 +32,6 @@ jobs:
     - name: Install ARM cross compiler
       run: sudo apt-get -y install gcc-arm-linux-gnueabihf
 
-#    - name: Install dependencies
-#      run: sudo apt-get install libgcc-s1:armhf gcc-10-base:armhf libgcc1:armhf libc6:armhf libc6-dev:armhf zlib1g:armhf zlib1g-dev:armhf
-
     - name: Compile
       run: cd src/motor && make target=CROSS
 
