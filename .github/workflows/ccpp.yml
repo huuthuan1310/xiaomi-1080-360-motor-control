@@ -58,8 +58,8 @@ jobs:
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v1
       with:
-        name: motord
-        path: src/bin/
+        name: motor.zip
+        path: src/motor/bin/
 
     - name: Release (pre-release)
       if: env.isReleaseCandidate == 'true'
@@ -67,7 +67,7 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         prerelease: true
-        artifacts: src/bin/
+        artifacts: src/motor/bin/
         
     - name: Update latest-rc tag
       if: env.isReleaseCandidate == 'true'
@@ -78,14 +78,14 @@ jobs:
         allowUpdates: true
         replacesArtifacts: true
         prerelease: true
-        artifacts: src/bin/
+        artifacts: src/motor/bin/
 
     - name: Release (final)
       if: env.isFinalRelease == 'true'
       uses: ncipollo/release-action@v1
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        artifacts: src/bin/
+        artifacts: src/motor/bin/
         
     - name: Update latest tag
       if: env.isFinalRelease == 'true'
@@ -95,4 +95,4 @@ jobs:
         tag: latest
         allowUpdates: true
         replacesArtifacts: true
-        artifacts: src/bin/
+        artifacts: src/motor/bin/
