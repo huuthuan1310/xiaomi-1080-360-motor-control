@@ -1,11 +1,7 @@
-LDFLAGS=-ldl -pthread -w 
-CC = gcc
-CROSSCC = arm-linux-gnueabihf-gcc
+LDFLAGS=-ldl -pthread -w -static
 
-all: cross
-
-cross: 
-	$(CROSSCC) motord.c $(LDFLAGS) -o motord  
+all: 
+	$(CC) motord.c $(LDFLAGS) -o motord  
 
 test:
 	$(CC) motord.c $(LDFLAGS) -o motord  
