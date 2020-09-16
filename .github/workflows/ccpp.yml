@@ -58,7 +58,7 @@ jobs:
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v1
       with:
-        name: motor.zip
+        name: motor
         path: src/motor/bin/
 
     - name: Release (pre-release)
