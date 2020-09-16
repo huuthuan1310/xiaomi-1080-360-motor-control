@@ -1,1 +1,5 @@
-src/motor/motord
+motord
+web_control
+event
+*.so
+status
